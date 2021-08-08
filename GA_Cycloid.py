@@ -65,7 +65,8 @@ def sum_time(arr):
         batch = r * pi / x_size
         h = M * batch
         #가속도 정의, m <= 0이라는 가정 하에 만듦
-        a = h * G / sqrt(batch**2 + h**2)
+        #a = h * G / sqrt(batch**2 + h**2)
+        a = G * M / sqrt(1+M**2)
         #나중속도 산출
         if M == 0:
             after_v = v0
@@ -88,7 +89,8 @@ def sum_time(arr):
 #최대 적합도가 최소 적합도의 k배가 되도록 만듦
 def fitness(t):
     #arr : sum_time입력받음
-    f = T/t * 100
+    #별로 차이가 나지 않아 제곱을 해 주는 것이 좋을 것 같음
+    f = (T/t)**2 * 100
     return f
 #서로 다른 두 랜덤 정수를 반환하는 함수
 
@@ -269,14 +271,16 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
                 randM = tan(theta)
                 #randM = rand(-2, 0)        # 기울기 자체를 랜덤값으로 결정
                 bucket.append(randM)
-            b_fitness = fitness(sum_time(bucket))
+                #b_fitness = fitness(sum_time(bucket))
+
             child[-1].append(bucket)
         # 5. 정규화
         for i in range(num):
             child[i][2] = generalization(child[i][2])
         
         #gen 출력
-        print('gen :', gen)
+        if gen % 1000 == 0:
+            print('gen :', gen)
         # 6. 적합도 계산
         fitness_table = []
         time_table = []
@@ -320,6 +324,7 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
     
 
     draw_cycloid(child[0][2])
+    #세대출력
     print('gen :', max_index)
     t = sum_time(child[0][2])
     print('max fitness :', child[0][0])
@@ -338,19 +343,20 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
 
 
 #최대 세대 수
-max_gen = 10
+max_gen = 10000
 #자녀 수
 num = 100
 #최소 기울기값
-min_m = -2
+min_m = -10
 #돌연변이율
 mut_chance = 0.2
 #돌연변이시 바꾸는 최대 비율(양수 입력)
-mut_rate = 0.1
+mut_rate = 0.6
 print('Making Cycleroid by Genetic Algorithm by Han SJ')
 print('Best Solution T :', T)
 # 자녀 정보 출력
-print('total child numbers :', num, 'chromosom length : ', x_size)
+print('total child :', num, 'chromosom length : ', x_size)
+print('min_m :', min_m, 'mut_chance :', mut_chance, 'mut_rate :', mut_rate)
 #유전 알고리즘 시작
 selection(num, min_m, max_gen, mut_chance, mut_rate)
 cycloid(5)
