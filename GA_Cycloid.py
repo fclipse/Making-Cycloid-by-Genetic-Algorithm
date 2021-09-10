@@ -13,9 +13,9 @@ def intrand(x, y):
     return int(uniform(x, y))
 
 #맵 크기
-r = 5
+r = 50
 x_len = 2*r     #그래프상 x범위
-x_size = 20    #구간 개수
+x_size = 50    #구간 개수
 
 y_len = 2*r
 y_size = 2*r
@@ -94,8 +94,8 @@ def sum_time(arr):
 def fitness(t):
     #arr : sum_time입력받음
     #별로 차이가 나지 않아 제곱을 해 주는 것이 좋을 것 같음
-    f = (T/t)**2 * 100
-    f
+    #f = (T/t)**2 * 100
+    f = T/t*100
     return f
 #서로 다른 두 랜덤 정수를 반환하는 함수
 
@@ -123,7 +123,7 @@ def draw_cycloid(arr):
     plt.ylabel('y axis')
     plt.title('GA_Cycloid')
     plt.xlim([0, r*pi])
-    plt.ylim([0, 10])
+    plt.ylim([0, 2*r])
     plt.show()
 
 #유전 알고리즘
@@ -217,14 +217,14 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
         parents = copy.deepcopy(child)
         child = []
         # 1. 상위 10%만 다음 세대로 전달
-        for i in range(num//100*10):
-            inherit.append(parents[i])
+        for i in range(num//10):
+            inherit.append(parents[i])      #ERROR : 제대로 복사 안 되는 문제 -> 처음 정수형 나누기때 몫이 0이되어버림
         child = copy.deepcopy(inherit)
         
         # 2. 50% 교차시킴
         #임시 저장 변수
         val = 0
-        for i in range(num//100*50//2):
+        for i in range(num//4):             #4의 배수로 num 입력해야 함
             #0, 1번째 인덱스는 사람을, 2, 3번째 인덱스는 교차 포인트를 결정함
             index = []
             for j in range(4):
@@ -265,7 +265,7 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
         for i in inherit:
             child.append(i)
         
-        for i in range(num//100*40, num//100*90):
+        for i in range(num//10*4, num//10*9):
             for j in range(x_size):
                 point = rand(0, 1)
                 if(point < mut_chance):
@@ -359,20 +359,23 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
 
 
 #최대 세대 수
-max_gen = 2000
+max_gen = 10000
 #자녀 수
-num = 200
+num = 80        #4와 10의 최소공배수 입력
 #최소 기울기값
 min_m = -10
 #돌연변이율
 mut_chance = 0.3
 #돌연변이시 바꾸는 최대 비율(양수 입력)
-mut_rate = 0.6
+mut_rate = 0.3
 print('Making Cycleroid by Genetic Algorithm by Han SJ')
 print('Best Solution T :', T)
 # 자녀 정보 출력
 print('total child :', num, 'chromosom length : ', x_size)
-print('min_m :', min_m, 'mut_chance :', mut_chance, 'mut_rate :', mut_rate, 'batch :', x_size)
+print('min_m :', min_m, 'mut_chance :', mut_chance)
+print('mut_rate :', mut_rate, 'batch :', x_size)
+print('r :', r)
 #유전 알고리즘 시작
 selection(num, min_m, max_gen, mut_chance, mut_rate)
 cycloid(5)
+# %%
