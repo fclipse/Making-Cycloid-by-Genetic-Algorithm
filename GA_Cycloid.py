@@ -4,31 +4,35 @@ import copy
 import matplotlib.pyplot as plt
 import numpy as np
 from random import uniform
-from math import sqrt, cos, sin, tan, atan, pi
+from math import sqrt, cos, sin, tan, atan, pi, exp
 
 # According to PEP8, do not assign lambda
 def rand(x, y):
     return uniform(x, y)
-
 def intrand(x, y):
     return int(uniform(x, y))
 
 #맵 크기
 r = 5
-x_size = 2*r
+x_len = 2*r     #그래프상 x범위
+x_size = 20    #구간 개수
+
+y_len = 2*r
 y_size = 2*r
+
 x = []
 for i in range(x_size + 1):
-    x.append(i*pi/2)
+    x.append(i*pi*r/x_size)
 #중력가속도
 G = 9.80665
 #최단 시간
 T = sqrt(r / G)*pi
+
 def cycloid(r):
   x = [] #x좌표 리스트 만듦
   y = [] #y좌표 리스트 만듦
 
-  for theta in np.linspace(0, np.pi, 10): #theta변수를 -2π 에서 2π 까지 반복함
+  for theta in np.linspace(0, np.pi, 100): #theta변수를 -2π 에서 2π 까지 반복함
     x.append(r*(theta - sin(theta))) #x 리스트에 매개변수함수값을 추가시킴
     y.append(10 -(r*(1 - cos(theta)))) #y 리스트에 매개변수함수값을 추가시킴
 
@@ -50,7 +54,7 @@ def generalization(arr0):
         Msum += i
         if i > 0:
             arr[arr.index(i)] *= 1
-    delta = y_size / Msum * -1
+    delta = y_len / Msum * -1
 
     for i in range(len(arr)): 
         arr[i] *= delta
@@ -91,6 +95,7 @@ def fitness(t):
     #arr : sum_time입력받음
     #별로 차이가 나지 않아 제곱을 해 주는 것이 좋을 것 같음
     f = (T/t)**2 * 100
+    f
     return f
 #서로 다른 두 랜덤 정수를 반환하는 함수
 
@@ -109,7 +114,7 @@ def rand2num(x, y):
 #그래프 그려주는 함수
 def draw_cycloid(arr):
     #arr : 기울기 배열 입력
-    y = [10]
+    y = [y_len]
     for i in range(x_size):
         y.append(y[-1] + arr[i])
     
@@ -117,7 +122,7 @@ def draw_cycloid(arr):
     plt.xlabel('x axis')
     plt.ylabel('y axis')
     plt.title('GA_Cycloid')
-    plt.xlim([0, 5*pi])
+    plt.xlim([0, r*pi])
     plt.ylim([0, 10])
     plt.show()
 
@@ -223,17 +228,27 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
             #0, 1번째 인덱스는 사람을, 2, 3번째 인덱스는 교차 포인트를 결정함
             index = []
             for j in range(4):
-                index.append(int(rand(0, x_size)))
-                if j%2 == 1:
+                if j < 2:
+                    index.append(int(rand(0, num//10)))
+                else:
+                    index.append((int(rand(0, x_size))))
+                
+                if j % 2 == 1:
                     #같을 경우 하나만 바꿔줌
                     while index[j-1] == index[j]:
-                        index[j] = int(rand(0, x_size))
-                        index[j-1] = int(rand(0, x_size))
+                        if j == 1:
+                            index[j] = int(rand(0, num//10))
+                            index[j-1] = int(rand(0, num//10))
+                        else:
+                            index[j] = int(rand(0, x_size))
+                            index[j-1] = int(rand(0, x_size))
+                    
                     #0 1, 2 3은 각각 오름차순으로 정렬
                     if index[j-1] > index[j]:
                         val = copy.deepcopy(index[j])
                         index[j-1] = copy.deepcopy(index[j])
                         index[j] = copy.deepcopy(val)
+
             #child에 변화시킬 유전자 2개씩 추가
             child.append(inherit[index[0]])
             child.append(inherit[index[1]])
@@ -344,20 +359,20 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
 
 
 #최대 세대 수
-max_gen = 10000
+max_gen = 2000
 #자녀 수
-num = 100
+num = 200
 #최소 기울기값
 min_m = -10
 #돌연변이율
-mut_chance = 0.2
+mut_chance = 0.3
 #돌연변이시 바꾸는 최대 비율(양수 입력)
 mut_rate = 0.6
 print('Making Cycleroid by Genetic Algorithm by Han SJ')
 print('Best Solution T :', T)
 # 자녀 정보 출력
 print('total child :', num, 'chromosom length : ', x_size)
-print('min_m :', min_m, 'mut_chance :', mut_chance, 'mut_rate :', mut_rate)
+print('min_m :', min_m, 'mut_chance :', mut_chance, 'mut_rate :', mut_rate, 'batch :', x_size)
 #유전 알고리즘 시작
 selection(num, min_m, max_gen, mut_chance, mut_rate)
 cycloid(5)
