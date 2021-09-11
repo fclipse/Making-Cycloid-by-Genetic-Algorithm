@@ -13,9 +13,9 @@ def intrand(x, y):
     return int(uniform(x, y))
 
 #맵 크기
-r = 50
+r = 100
 x_len = 2*r     #그래프상 x범위
-x_size = 50    #구간 개수
+x_size = 100    #구간 개수
 
 y_len = 2*r
 y_size = 2*r
@@ -41,8 +41,8 @@ def cycloid(r):
   plt.title('Cycloid')
   plt.xlabel('x')
   plt.ylabel('y')
-  plt.xlim([0, 5*pi])
-  plt.ylim([0, 10])
+  #plt.xlim([0, r*pi])
+  #plt.ylim([0, 2*r])
   plt.show()  #그래프 출력하기
 
 #정규화 함수, 배열의 기울기 합과 y_size가 같도록 만들어줌
@@ -329,9 +329,10 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
     #plt.figure(figsize = (100, 100))
     plt.plot(generation, gen_maxfitness, marker = 'o')
     plt.plot(generation, gen_avefitness, marker = 'o')
-    plt.plot(generation, gen_minfitness, marker = 'o')
+    #plt.plot(generation, gen_minfitness, marker = 'o')
     plt.title('Fitnesses of All Generations')
-    plt.legend(['max', 'ave', 'min'])
+    #plt.legend(['max', 'ave', 'min'])
+    plt.legend(['max', 'ave'])
     plt.show()
     #print('max', gen_maxfitness)
     #print('ave', gen_avefitness)
@@ -342,9 +343,9 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
     #세대출력
     print('gen :', max_index)
     t = sum_time(child[0][2])
-    print('max fitness :', child[0][0])
+    print('max fitness :', child[0][0], '%')
     print('Solution :', t, 's')
-    print('delta', t - T)
+    print('delta', t - T, 's')
     print('child :', child[0])
 
 """알고리즘 개요"""
@@ -361,7 +362,7 @@ def selection(num, min_m, max_gen, mut_chance, mut_rate):
 #최대 세대 수
 max_gen = 10000
 #자녀 수
-num = 80        #4와 10의 최소공배수 입력
+num = 120        #4와 10의 최소공배수 입력
 #최소 기울기값
 min_m = -10
 #돌연변이율
@@ -377,5 +378,5 @@ print('mut_rate :', mut_rate, 'batch :', x_size)
 print('r :', r)
 #유전 알고리즘 시작
 selection(num, min_m, max_gen, mut_chance, mut_rate)
-cycloid(5)
+cycloid(r)
 # %%
